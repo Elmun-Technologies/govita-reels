@@ -1,0 +1,21 @@
+{
+  "title": "Qishdagi charchoq — dangasalik emas",
+  "idea_id": "A",
+  "duration_target_s": 60,
+  "word_count": 128,
+  "scenes": [
+    {"id": 1, "role": "hook", "voiceover": "Ertalab charchab uyg'onish — bu dangasalik emas.", "on_screen_text": "Bu *dangasalik* emas", "overlay_style": "hook", "visual_brief": "tired young woman waking up in bed, winter morning light"},
+    {"id": 2, "role": "problem", "voiceover": "Sakkiz soat uxladingiz, lekin turishga kuch yo'q. Ishda esa tushdan keyin ko'z yumilib ketadi.", "on_screen_text": "", "overlay_style": "none", "visual_brief": "office worker yawning at desk afternoon"},
+    {"id": 3, "role": "cause", "voiceover": "Qishda quyosh kam, biz esa kunning ko'p qismini xonada o'tkazamiz. Organizm esa D vitaminini asosan quyosh nuridan oladi.", "on_screen_text": "Quyosh kam", "overlay_style": "label", "visual_brief": "grey winter city street cloudy sky"},
+    {"id": 4, "role": "fact", "voiceover": "Uchta belgiga e'tibor bering. Birinchi: doimiy holsizlik. Ikkinchi: tez-tez shamollash. Uchinchi: kayfiyat tushishi.", "on_screen_text": "3 ta belgi", "overlay_style": "label", "visual_brief": "person sneezing tissue cold winter"},
+    {"id": 5, "role": "solution", "voiceover": "Avval tahlil topshiring va shifokor bilan gaplashing. Kunduzi yarim soat ochiq havoda yurish ham yordam beradi.", "on_screen_text": "Avval *tahlil*", "overlay_style": "label", "visual_brief": "woman walking outdoors sunny winter park"},
+    {"id": 6, "role": "product", "voiceover": "Sifatli, sertifikatlangan vitaminlarni esa Go Vita orqali uyga buyurtma qilishingiz mumkin.", "on_screen_text": "", "overlay_style": "none", "visual_brief": "vitamin bottle delivery package doorstep"},
+    {"id": 7, "role": "cta", "voiceover": "Sizda qaysi belgi bor — bir, ikki yoki uch? Kommentga yozing.", "on_screen_text": "1, 2 yoki 3?", "overlay_style": "label", "visual_brief": "smiling woman typing comment on phone"}
+  ],
+  "cover": {"headline": "Charchoq *sababi* — quyosh?", "subline": "3 ta belgini tekshiring", "tag": "Sizda ham bormi?", "visual_brief": "tired woman winter window"},
+  "caption": "Ertalab charchab uyg'onasizmi? Bu dangasalik emas 👇\n\nQishda quyosh kam — organizm esa D vitaminini asosan quyoshdan oladi.\n\nUch belgiga e'tibor bering: holsizlik, tez-tez shamollash, kayfiyat tushishi.\n\nSizda qaysi biri bor — 1, 2 yoki 3? Kommentga yozing 👇\n\nDori vositasi emas. Qo'llashdan oldin mutaxassis bilan maslahatlashing.",
+  "hashtags": ["#govita", "#dvitamini", "#charchoq", "#sogliq", "#vitaminlar", "#витамины"],
+  "pin_comment": "Tahlil topshirgan bo'lsangiz — natijangiz qanday chiqdi? Tajribangiz bilan bo'lishing 👇",
+  "sources": [{"claim": "D vitamini quyosh nuri ta'sirida terida hosil bo'ladi", "url": "https://ods.od.nih.gov/factsheets/VitaminD-Consumer/"}],
+  "backup_hooks": ["Qishda deyarli hamma bitta xatoni qiladi.", "Sakkiz soat uxlab ham charchaysizmi?"]
+}

@@ -1,0 +1,7 @@
+# TZ=Asia/Tashkent (konteyner env). Vaqtni o'zgartirsangiz: docker compose restart agency
+# Har kuni 05:00 — pipeline (odatda 08:00 gacha tugaydi)
+0 5 * * * /app/bin/run-daily
+# 08:30 — video yuborilmagan bo'lsa Telegram alert
+30 8 * * * cd /app && python3 -m agency.pipeline healthcheck
+# Har yakshanba 03:00 — bank indeksini yangilash (qo'lda qo'shilgan Adobe fayllar uchun)
+0 3 * * 0 cd /app && python3 -m agency.tools.stock_search reindex

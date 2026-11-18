@@ -1,0 +1,17 @@
+{
+  "_note": "PLACEHOLDER — GoVita'ning haqiqiy assortimenti bilan almashtiring (yoki saytdan eksport). Copywriter va researcher product_fit uchun ishlatadi.",
+  "categories": [
+    {"id": "vitamin-d", "name": "D vitamini", "url": "https://govita.uz/"},
+    {"id": "magnesium", "name": "Magniy", "url": "https://govita.uz/"},
+    {"id": "iron", "name": "Temir", "url": "https://govita.uz/"},
+    {"id": "omega-3", "name": "Omega-3", "url": "https://govita.uz/"},
+    {"id": "b-complex", "name": "B guruhi vitaminlari", "url": "https://govita.uz/"},
+    {"id": "zinc", "name": "Rux", "url": "https://govita.uz/"},
+    {"id": "vitamin-c", "name": "C vitamini", "url": "https://govita.uz/"},
+    {"id": "collagen", "name": "Kollagen", "url": "https://govita.uz/"},
+    {"id": "probiotics", "name": "Probiotiklar", "url": "https://govita.uz/"},
+    {"id": "kids", "name": "Bolalar vitaminlari", "url": "https://govita.uz/"},
+    {"id": "protein", "name": "Protein (sport nutrition)", "url": "https://govita.uz/"},
+    {"id": "multivitamin", "name": "Multivitaminlar", "url": "https://govita.uz/"}
+  ]
+}

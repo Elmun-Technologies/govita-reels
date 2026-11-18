@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "script",
+  "type": "object",
+  "required": ["title", "idea_id", "duration_target_s", "word_count", "scenes", "cover", "caption", "hashtags", "pin_comment", "sources"],
+  "properties": {
+    "title": {"type": "string", "minLength": 3},
+    "idea_id": {"type": "string"},
+    "duration_target_s": {"type": "number", "minimum": 40, "maximum": 88},
+    "word_count": {"type": "integer", "minimum": 80, "maximum": 210},
+    "scenes": {
+      "type": "array", "minItems": 4, "maxItems": 14,
+      "items": {
+        "type": "object",
+        "required": ["id", "role", "voiceover", "on_screen_text", "overlay_style", "visual_brief"],
+        "properties": {
+          "id": {"type": "integer", "minimum": 1},
+          "role": {"enum": ["hook", "problem", "cause", "fact", "solution", "product", "cta"]},
+          "voiceover": {"type": "string", "minLength": 3},
+          "on_screen_text": {"type": "string"},
+          "overlay_style": {"enum": ["hook", "label", "stat", "none"]},
+          "visual_brief": {"type": "string", "minLength": 5}
+        }
+      }
+    },
+    "cover": {
+      "type": "object", "required": ["headline", "subline", "visual_brief"],
+      "properties": {"headline": {"type": "string", "maxLength": 48}, "subline": {"type": "string", "maxLength": 60},
+                     "tag": {"type": "string", "maxLength": 24}, "visual_brief": {"type": "string"}}
+    },
+    "caption": {"type": "string", "minLength": 50, "maxLength": 2000},
+    "hashtags": {"type": "array", "items": {"type": "string", "pattern": "^#"}, "minItems": 3, "maxItems": 12},
+    "pin_comment": {"type": "string", "minLength": 5},
+    "sources": {"type": "array", "items": {"type": "object", "required": ["claim", "url"],
+                "properties": {"claim": {"type": "string"}, "url": {"type": "string", "pattern": "^https?://"}}}},
+    "backup_hooks": {"type": "array", "items": {"type": "string"}}
+  }
+}

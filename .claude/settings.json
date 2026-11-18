@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Bash(python -m agency.*)",
+      "Bash(python3 -m agency.*)",
+      "Bash(npx hyperframes *)",
+      "Bash(ffmpeg *)",
+      "Bash(ffprobe *)",
+      "Bash(yt-dlp *)",
+      "Bash(ls *)",
+      "Bash(cat *)",
+      "Bash(head *)",
+      "Bash(tail *)",
+      "Bash(jq *)",
+      "Bash(bin/run-daily *)",
+      "Read(**)",
+      "Write(runs/**)",
+      "Write(knowledge/**)",
+      "Edit(runs/**)",
+      "Edit(knowledge/**)",
+      "WebSearch",
+      "WebFetch"
+    ],
+    "deny": [
+      "Read(.env)",
+      "Read(.env.*)",
+      "Read(**/.env)",
+      "Bash(cat .env*)",
+      "Bash(env)",
+      "Bash(printenv*)",
+      "Bash(rm -rf /*)",
+      "Bash(git push --force*)",
+      "Bash(curl *api.telegram.org*)"
+    ]
+  },
+  "env": {
+    "PYTHONUNBUFFERED": "1",
+    "HYPERFRAMES_SKIP_SKILLS": "1"
+  }
+}

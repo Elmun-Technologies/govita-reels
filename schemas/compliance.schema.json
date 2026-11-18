@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "compliance",
+  "type": "object",
+  "required": ["status", "issues", "checked_claims"],
+  "properties": {
+    "status": {"enum": ["PASS", "FIX", "FAIL"]},
+    "issues": {"type": "array", "items": {"type": "object", "required": ["problem", "fix"],
+      "properties": {"scene": {"type": ["integer", "string", "null"]}, "severity": {"enum": ["low", "medium", "high"]},
+                     "problem": {"type": "string"}, "fix": {"type": "string"}}}},
+    "checked_claims": {"type": "array", "items": {"type": "object", "required": ["claim", "verdict"],
+      "properties": {"claim": {"type": "string"}, "verdict": {"enum": ["supported", "unsupported", "softened"]},
+                     "source": {"type": "string"}}}},
+    "disclaimer_present": {"type": "boolean"},
+    "notes": {"type": "string"}
+  },
+  "allOf": [{"if": {"properties": {"status": {"const": "PASS"}}}, "then": {"properties": {"issues": {"maxItems": 3}}}}]
+}

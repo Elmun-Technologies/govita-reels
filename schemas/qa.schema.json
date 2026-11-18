@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "qa",
+  "type": "object",
+  "required": ["status", "score", "fixes"],
+  "properties": {
+    "status": {"enum": ["PASS", "FAIL"]},
+    "score": {"type": "number", "minimum": 0, "maximum": 10},
+    "fixes": {"type": "array", "items": {"type": "string"}},
+    "hook_ok": {"type": "boolean"},
+    "captions_ok": {"type": "boolean"},
+    "cover_ok": {"type": "boolean"},
+    "notes": {"type": "string"}
+  }
+}

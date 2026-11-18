@@ -1,0 +1,19 @@
+{
+  "date": "2026-11-19",
+  "pillar": "Belgilar: sizda ham bormi?",
+  "global_patterns": [
+    {"pattern": "3 ta belgi ro'yxati + 'sizda qaysi biri bor?' savoli", "evidence": ["https://www.youtube.com/shorts/example1"], "why_it_works": "Tomoshabin o'zini tekshiradi va raqam bilan komment yozadi"},
+    {"pattern": "Mifni rad etish bilan boshlanadigan hook", "evidence": ["https://www.youtube.com/shorts/example2"], "why_it_works": "Kognitiv dissonans scroll'ni to'xtatadi"}
+  ],
+  "uz_competitor_gaps": ["Raqobatchilar faqat mahsulot rasmini joylaydi, foydali kontent yo'q"],
+  "ideas": [
+    {"id": "A", "topic": "Qishda doimiy charchoq va D vitamini", "uz_pain": "Ertalab charchab uyg'onish", "hook_angle": "Bu dangasalik emas", "format": "symptoms-list", "trend_evidence": ["https://www.youtube.com/shorts/example1"], "govita_product_fit": ["vitamin-d"], "engagement_mechanic": "Qaysi belgi sizda bor — 1, 2, 3?", "scores": {"pain_relevance": 9, "trend_strength": 8, "novelty_vs_last60d": 9, "compliance_risk": 3, "product_fit": 8}},
+    {"id": "B", "topic": "Soch to'kilishi va temir", "uz_pain": "Soch to'kilishi", "hook_angle": "Shampun aybdor emas", "format": "myth-vs-fact", "trend_evidence": ["https://www.youtube.com/shorts/example2"], "govita_product_fit": ["iron"], "engagement_mechanic": "Ha / Yo'q", "scores": {"pain_relevance": 8, "trend_strength": 7, "novelty_vs_last60d": 8, "compliance_risk": 4, "product_fit": 7}},
+    {"id": "C", "topic": "Magniy va uyqu", "uz_pain": "Uyqusizlik", "hook_angle": "Kechasi 3 da uyg'onasizmi?", "format": "explainer", "trend_evidence": ["https://www.youtube.com/shorts/example3"], "govita_product_fit": ["magnesium"], "engagement_mechanic": "Kommentga +", "scores": {"pain_relevance": 7, "trend_strength": 7, "novelty_vs_last60d": 9, "compliance_risk": 3, "product_fit": 7}}
+  ],
+  "chosen": "A",
+  "reasoning": "Noyabr — quyosh kamayadi, charchoq og'rig'i eng keng tarqalgan, global trendda symptoms-list formati kuchli.",
+  "facts": ["Qishda quyosh nuri kamayadi"],
+  "assumptions": ["O'zbek auditoriyasida D vitamini mavzusi qiziqarli"],
+  "data_gaps": []
+}

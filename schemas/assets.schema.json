@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "assets",
+  "type": "object",
+  "required": ["scenes"],
+  "properties": {
+    "scenes": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object", "required": ["id", "items"],
+        "properties": {
+          "id": {"type": "integer"},
+          "items": {"type": "array", "minItems": 1, "items": {
+            "type": "object", "required": ["key", "path", "kind", "role", "license"],
+            "properties": {
+              "key": {"type": "string"}, "path": {"type": "string"},
+              "kind": {"enum": ["video", "photo"]}, "role": {"enum": ["primary", "secondary", "backup"]},
+              "license": {"type": "string"}, "duration": {"type": ["number", "null"]},
+              "media_start": {"type": "number", "minimum": 0}, "note": {"type": "string"}
+            }}}
+        }
+      }
+    },
+    "cover_candidates": {"type": "array", "items": {"type": "string"}}
+  }
+}

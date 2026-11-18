@@ -1,0 +1,37 @@
+# Ishga tushirish:  docker compose up -d --build
+# Loglar:           docker compose logs -f agency
+# Qo'lda run:       docker compose exec agency bin/run-daily
+services:
+  agency:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    image: govita-reels:latest
+    container_name: govita-reels
+    restart: unless-stopped
+    env_file: .env
+    command: ["cron"]
+    volumes:
+      - .:/app
+      - node_modules:/app/node_modules
+    shm_size: "1gb"
+    cpus: ${DOCKER_CPUS:-4}
+    mem_limit: ${DOCKER_MEM:-6g}
+    init: true
+
+  bot:
+    image: govita-reels:latest
+    container_name: govita-reels-bot
+    restart: unless-stopped
+    env_file: .env
+    command: ["bot"]
+    volumes:
+      - .:/app
+      - node_modules:/app/node_modules
+    depends_on:
+      - agency
+    mem_limit: 512m
+    init: true
+
+volumes:
+  node_modules:

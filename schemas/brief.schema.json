@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "brief",
+  "type": "object",
+  "required": ["date", "pillar", "global_patterns", "uz_competitor_gaps", "ideas", "chosen", "reasoning"],
+  "properties": {
+    "date": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$"},
+    "pillar": {"type": "string", "minLength": 2},
+    "global_patterns": {
+      "type": "array", "minItems": 2,
+      "items": {"type": "object", "required": ["pattern", "evidence", "why_it_works"],
+        "properties": {"pattern": {"type": "string"}, "evidence": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+                       "why_it_works": {"type": "string"}}}
+    },
+    "uz_competitor_gaps": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+    "ideas": {
+      "type": "array", "minItems": 3, "maxItems": 5,
+      "items": {
+        "type": "object",
+        "required": ["id", "topic", "uz_pain", "hook_angle", "format", "trend_evidence", "govita_product_fit", "engagement_mechanic", "scores"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^[A-E]$"},
+          "topic": {"type": "string", "minLength": 5},
+          "uz_pain": {"type": "string"},
+          "hook_angle": {"type": "string"},
+          "format": {"enum": ["myth-vs-fact", "symptoms-list", "story", "explainer", "routine", "qna", "mistakes-list"]},
+          "trend_evidence": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+          "govita_product_fit": {"type": "array", "items": {"type": "string"}},
+          "engagement_mechanic": {"type": "string"},
+          "scores": {
+            "type": "object",
+            "required": ["pain_relevance", "trend_strength", "novelty_vs_last60d", "compliance_risk", "product_fit"],
+            "additionalProperties": {"type": "number", "minimum": 0, "maximum": 10}
+          }
+        }
+      }
+    },
+    "chosen": {"type": "string", "pattern": "^[A-E]$"},
+    "reasoning": {"type": "string", "minLength": 20},
+    "facts": {"type": "array", "items": {"type": "string"}},
+    "assumptions": {"type": "array", "items": {"type": "string"}},
+    "data_gaps": {"type": "array", "items": {"type": "string"}}
+  }
+}

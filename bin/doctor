@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# O'rnatishni tekshirish: kalitlar, Claude Max auth, HyperFrames, Chromium, ffmpeg, API'lar.
+cd "$(dirname "$0")/.."
+python3 -m agency.doctor "$@"

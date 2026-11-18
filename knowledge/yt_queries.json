@@ -1,0 +1,30 @@
+{
+  "_note": "search.list = 100 unit. 24 ta so'rov ≈ 2400 unit (bepul kvota 10 000/kun). segment: global | cis | uz",
+  "queries": [
+    {"q": "vitamin d deficiency signs", "segment": "global", "lang": "en"},
+    {"q": "magnesium benefits sleep", "segment": "global", "lang": "en"},
+    {"q": "iron deficiency women tired", "segment": "global", "lang": "en"},
+    {"q": "supplements you should not take together", "segment": "global", "lang": "en"},
+    {"q": "doctor reacts vitamins", "segment": "global", "lang": "en"},
+    {"q": "hair loss vitamin", "segment": "global", "lang": "en"},
+    {"q": "omega 3 benefits", "segment": "global", "lang": "en"},
+    {"q": "gut health probiotics", "segment": "global", "lang": "en"},
+    {"q": "collagen myth", "segment": "global", "lang": "en"},
+    {"q": "creatine beginners mistakes", "segment": "global", "lang": "en"},
+    {"q": "pharmacy ad", "segment": "global", "lang": "en", "duration": "any"},
+    {"q": "supplement brand commercial", "segment": "global", "lang": "en", "duration": "any"},
+    {"q": "витамин д дефицит симптомы", "segment": "cis", "lang": "ru", "region": "RU"},
+    {"q": "какие витамины пить зимой", "segment": "cis", "lang": "ru", "region": "RU"},
+    {"q": "дефицит железа усталость", "segment": "cis", "lang": "ru", "region": "KZ"},
+    {"q": "магний для сна", "segment": "cis", "lang": "ru", "region": "KZ"},
+    {"q": "выпадение волос витамины", "segment": "cis", "lang": "ru", "region": "RU"},
+    {"q": "витамины ташкент", "segment": "uz", "lang": "ru", "region": "UZ", "duration": "any"},
+    {"q": "vitamin", "segment": "uz", "lang": "uz", "region": "UZ", "duration": "any"},
+    {"q": "charchoq sababi", "segment": "uz", "lang": "uz", "region": "UZ", "duration": "any"},
+    {"q": "soch to'kilishi", "segment": "uz", "lang": "uz", "region": "UZ", "duration": "any"},
+    {"q": "immunitet bolalar", "segment": "uz", "lang": "uz", "region": "UZ", "duration": "any"},
+    {"q": "kamqonlik belgilari", "segment": "uz", "lang": "uz", "region": "UZ", "duration": "any"},
+    {"q": "d vitamini", "segment": "uz", "lang": "uz", "region": "UZ", "duration": "any"}
+  ],
+  "ad_library_keywords": ["vitamin", "витамины", "omega 3", "magniy", "dorixona", "БАД"]
+}

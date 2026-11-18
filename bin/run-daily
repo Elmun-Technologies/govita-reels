@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# Kunlik pipeline wrapper: lock (parallel ishga tushmaslik), umumiy timeout, log.
+# Foydalanish: bin/run-daily [--date YYYY-MM-DD] [--from STAGE] [--idea next|A|B|C] [--force]
+set -uo pipefail
+cd "$(dirname "$0")/.."
+mkdir -p data
+exec 9>data/run.lock
+if ! flock -n 9; then
+  echo "Pipeline allaqachon ishlayapti — o'tkazib yuborildi"
+  exit 0
+fi
+LOG="data/pipeline-$(date +%F).log"
+timeout "${PIPELINE_TIMEOUT_MIN:-170}m" python3 -m agency.pipeline run "$@" 2>&1 | tee -a "$LOG"
+code=${PIPESTATUS[0]}
+if [ "$code" = "124" ]; then
+  python3 -c "from agency import telegram; telegram.send_alert('Pipeline umumiy timeout (${PIPELINE_TIMEOUT_MIN:-170} daq) — bin/run-daily bilan davom ettiring')"
+fi
+exit "$code"

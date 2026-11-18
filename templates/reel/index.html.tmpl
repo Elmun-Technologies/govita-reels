@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="uz" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <!-- GoVita Reels — HyperFrames composition. build_composition.py generatsiya qiladi.
+         Qo'lda tahrir: faqat editor agent, .claude/skills/govita-video qoidalari bo'yicha. -->
+    <script src="assets/gsap.min.js"></script>
+    <style>
+      {{FONT_FACES}}
+      :root {
+        --ground: {{COLOR_GROUND}};
+        --ink: {{COLOR_INK}};
+        --accent: {{COLOR_ACCENT}};
+        --accent-ink: {{COLOR_ACCENT_INK}};
+        --brand: {{COLOR_BRAND}};
+        --font-display: {{FONT_DISPLAY}};
+        --font-body: {{FONT_BODY}};
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body {
+        width: 1080px; height: 1920px; overflow: hidden; background: var(--ground);
+      }
+      #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; font-family: var(--font-body); }
+      .clip { position: absolute; inset: 0; }
+      .media { width: 1080px; height: 1920px; object-fit: cover; transform-origin: 50% 50%; will-change: transform; }
+      .shade {
+        position: absolute; inset: 0; pointer-events: none; z-index: 5;
+        background: linear-gradient(180deg, rgba(0,0,0,.45) 0%, rgba(0,0,0,0) 28%, rgba(0,0,0,0) 52%, rgba(0,0,0,.55) 100%);
+      }
+      /* Overlay matnlari — Instagram safe-zone: tepadan 220px, pastdan 380px bo'sh */
+      .ov { z-index: 20; display: flex; justify-content: center; padding: 0 72px; inset: auto 0 auto 0; }
+      .ov-hook { top: 300px; }
+      .ov .t { display: block; }
+      .ov-hook .t {
+        font-family: var(--font-display); font-weight: 800; font-size: 92px; line-height: 1.02;
+        letter-spacing: -0.03em; color: var(--ink); text-align: center; text-wrap: balance;
+        text-shadow: 0 6px 32px rgba(0,0,0,.45);
+      }
+      .ov-hook .t mark { background: var(--accent); color: var(--accent-ink); padding: 0 .12em; border-radius: .12em; }
+      .ov-label { top: 260px; }
+      .ov-label .t {
+        font-family: var(--font-display); font-weight: 700; font-size: 54px; line-height: 1.1; color: var(--accent-ink);
+        background: var(--accent); padding: 18px 34px; border-radius: 999px; text-align: center; max-width: 900px;
+      }
+      .ov-stat { top: 330px; }
+      .ov-stat .t {
+        font-family: var(--font-display); font-weight: 800; font-size: 150px; line-height: 1; color: var(--accent);
+        text-align: center; letter-spacing: -0.04em; text-shadow: 0 8px 40px rgba(0,0,0,.5);
+      }
+      .ov-stat .t small { display: block; font-size: 48px; font-weight: 600; color: var(--ink); letter-spacing: -0.01em; margin-top: 18px; }
+      /* Karaoke subtitrlar */
+      .cap {
+        z-index: 30; inset: auto 0 auto 0; top: 1180px; display: flex; justify-content: center; padding: 0 80px;
+      }
+      .cap .line { display: block; }
+      .cap .line {
+        font-family: var(--font-display); font-weight: 800; font-size: 76px; line-height: 1.08; letter-spacing: -0.02em;
+        color: var(--ink); text-align: center; text-wrap: balance;
+        text-shadow: 0 4px 0 rgba(0,0,0,.35), 0 0 28px rgba(0,0,0,.55);
+      }
+      .cap .w { display: inline-block; margin: 0 .16em; transform-origin: 50% 70%; }
+      .cap .w.on { color: var(--accent); }
+      /* Progress bar (retention) */
+      #progress { position: absolute; z-index: 40; left: 0; top: 0; right: auto; bottom: auto; height: 8px; width: 1080px; background: var(--accent);
+                  transform-origin: 0 50%; transform: scaleX(0); }
+      .flash { z-index: 35; background: #fff; opacity: 0; }
+      /* End-card */
+      #endcard { z-index: 50; background: var(--brand); display: flex; flex-direction: column; align-items: center;
+                 justify-content: center; gap: 36px; }
+      #endcard img { width: 520px; height: auto; }
+      #endcard > span { display: block; }
+      #endcard .wordmark { font-family: var(--font-display); font-weight: 800; font-size: 140px; color: var(--ink); letter-spacing: -0.04em; }
+      #endcard .url { font-family: var(--font-display); font-weight: 700; font-size: 64px; color: var(--accent-ink);
+                      background: var(--accent); padding: 16px 40px; border-radius: 999px; }
+      #endcard .sub { font-size: 44px; color: var(--ink); opacity: .85; text-align: center; padding: 0 120px; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="{{DURATION}}" data-width="1080" data-height="1920" data-fps="30">
+{{ELEMENTS}}
+      <div id="progress" class="clip bar" data-start="0" data-duration="{{DURATION}}" data-track-index="9"></div>
+    </div>
+    <script>
+      window.__timelines = window.__timelines || {};
+      const DATA = {{DATA_JSON}};
+      const tl = gsap.timeline({ paused: true });
+
+      // Kadr harakati (Ken Burns / pan) — har shot davomida
+      DATA.shots.forEach((s) => {
+        const el = document.getElementById(s.mediaId);
+        if (!el) return;
+        const d = s.duration;
+        const m = {
+          "zoom-in":   [{ scale: 1.0 }, { scale: 1.14 }],
+          "zoom-out":  [{ scale: 1.16 }, { scale: 1.0 }],
+          "pan-left":  [{ scale: 1.15, x: 60 }, { scale: 1.15, x: -60 }],
+          "pan-right": [{ scale: 1.15, x: -60 }, { scale: 1.15, x: 60 }],
+          "pan-up":    [{ scale: 1.15, y: 70 }, { scale: 1.15, y: -70 }],
+          "punch-in":  [{ scale: 1.25 }, { scale: 1.08 }],
+          "none":      [{ scale: 1.02 }, { scale: 1.02 }],
+        }[s.motion] || [{ scale: 1.0 }, { scale: 1.1 }];
+        tl.fromTo(el, m[0], { ...m[1], duration: d, ease: s.motion === "punch-in" ? "power3.out" : "none" }, s.start);
+      });
+
+      // Overlay kirish animatsiyasi
+      DATA.overlays.forEach((o) => {
+        const el = document.querySelector("#" + o.id + " .t");
+        if (!el) return;
+        tl.fromTo(el, { y: 40, opacity: 0, scale: 0.96 }, { y: 0, opacity: 1, scale: 1, duration: 0.28, ease: "power3.out" }, o.start);
+        tl.to(el, { opacity: 0, y: -20, duration: 0.18, ease: "power2.in" }, o.start + o.duration - 0.18);
+      });
+
+      // Flash o'tishlar
+      DATA.flashes.forEach((f) => {
+        tl.fromTo("#" + f.id, { opacity: 0.0 }, { opacity: 0.85, duration: 0.05, yoyo: true, repeat: 1 }, f.start);
+      });
+
+      // Karaoke: chunk paydo bo'ladi, aktiv so'z rang + pop
+      DATA.captions.forEach((c) => {
+        const line = document.querySelector("#" + c.id + " .line");
+        tl.fromTo(line, { scale: 0.92, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.12, ease: "back.out(2)" }, c.start);
+        c.words.forEach((w) => {
+          const el = document.getElementById(w.id);
+          tl.set(el, { color: DATA.accent }, w.start);
+          tl.fromTo(el, { scale: 1.0 }, { scale: 1.12, duration: 0.08, yoyo: true, repeat: 1, ease: "power1.out" }, w.start);
+          tl.set(el, { color: DATA.ink }, w.end);
+        });
+      });
+
+      // Progress bar
+      tl.fromTo("#progress", { scaleX: 0 }, { scaleX: 1, duration: DATA.duration, ease: "none" }, 0);
+
+      // End-card
+      tl.fromTo("#endcard > *", { y: 50, opacity: 0 }, { y: 0, opacity: 1, duration: 0.35, stagger: 0.08, ease: "power3.out" }, DATA.endStart);
+
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>
