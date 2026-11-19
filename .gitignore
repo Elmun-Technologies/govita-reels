@@ -16,3 +16,10 @@ brand/music/*.wav
 *.tmp
 .DS_Store
 renders/
+.claude/skills/*
+!.claude/skills/govita-video/
+.venv-tools/
+brand/sfx/**/*.wav
+brand/sfx/**/*.mp3
+brand/sfx/*.wav
+brand/sfx/*.mp3

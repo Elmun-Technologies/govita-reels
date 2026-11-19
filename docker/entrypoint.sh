@@ -9,6 +9,9 @@ if [ ! -d node_modules/hyperframes ] || [ package-lock.json -nt node_modules/.pa
 fi
 mkdir -p runs bank data
 
+# Tashqi skill'lar (skills.lock.json) — yo'q yoki commit o'zgargan bo'lsa o'rnatiladi
+python3 -m agency.skills_install || echo "[entrypoint] ⚠ skill o'rnatishda xato — keyinroq: bin/install-skills"
+
 # Claude Code birinchi ishga tushishda onboarding so'ramasligi uchun
 if [ ! -f "$HOME/.claude.json" ]; then
   echo '{"hasCompletedOnboarding": true}' > "$HOME/.claude.json"

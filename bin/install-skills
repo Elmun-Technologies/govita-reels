@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# Tashqi skill'larni (skills.lock.json) o'rnatish. --global → ~/.claude/skills, --check → holat
+cd "$(dirname "$0")/.."
+exec python3 -m agency.skills_install "$@"

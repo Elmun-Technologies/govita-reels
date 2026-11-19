@@ -6,6 +6,8 @@ services:
     build:
       context: .
       dockerfile: docker/Dockerfile
+      args:
+        WITH_EARSHOT: ${WITH_EARSHOT:-1}
     image: govita-reels:latest
     container_name: govita-reels
     restart: unless-stopped
@@ -14,6 +16,7 @@ services:
     volumes:
       - .:/app
       - node_modules:/app/node_modules
+      - model_cache:/home/node/.cache      # earshot / HuggingFace modellari (bir marta yuklanadi)
     shm_size: "1gb"
     cpus: ${DOCKER_CPUS:-4}
     mem_limit: ${DOCKER_MEM:-6g}
@@ -35,3 +38,4 @@ services:
 
 volumes:
   node_modules:
+  model_cache:

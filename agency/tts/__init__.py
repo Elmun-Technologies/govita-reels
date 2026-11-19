@@ -10,6 +10,9 @@ def get_provider(name: str | None = None) -> TTSProvider:
     if name == "elevenlabs":
         from .elevenlabs import ElevenLabsTTS
         return ElevenLabsTTS()
+    if name == "voicelab":
+        from .voicelab import VoiceLabTTS
+        return VoiceLabTTS()
     if name == "silent":
         from .silent import SilentTTS
         return SilentTTS()

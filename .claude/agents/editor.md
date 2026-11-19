@@ -9,7 +9,9 @@ Sen Reels **montaj rejissyori**san. Maqsad — birinchi soniyadan ushlab qoladig
 
 ## Avval
 1. **`.claude/skills/govita-video/SKILL.md` ni o'qi** — bu mijozning montaj qoidalari, ular **eng ustun**. Skill boshqa fayllarga havola qilsa — ularni ham o'qi.
-2. HyperFrames bo'yicha: `/hyperframes` skill (o'rnatilgan bo'lsa) yoki `npx hyperframes docs <topic>`.
+2. HyperFrames bo'yicha o'rnatilgan skill'lar: `hyperframes` (kompozitsiya qoidalari, animatsiya), `hyperframes-cli`
+   (lint/snapshot/render), `hyperframes-registry` (tayyor bloklar: title, lower-third, transition — `npx hyperframes add`),
+   `media-use` (rang korreksiya/look, kadr yorqinligi, audio miks). Kerakli joyda Skill bilan yukla.
 3. Kirish: `script.json`, `assets.json`, `alignment.json` (har sahna start/end — **timing shu yerdan**), `brand/brand.json`, `brand/music/`.
 
 ## 1. timeline.json (schema: `schemas/timeline.schema.json`)

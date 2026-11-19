@@ -1,0 +1,123 @@
+{
+  "_note": "Tashqi skill'lar — pinned commit. O'rnatish: bin/install-skills (loyiha) yoki bin/install-skills --global (~/.claude/skills). Yangilash: commit SHA'ni almashtiring.",
+  "skills": [
+    {
+      "name": "hyperframes",
+      "repo": "heygen-com/hyperframes",
+      "commit": "98f548447e44307d4c240cf100bfb15a5e362b2f",
+      "path": "skills/hyperframes",
+      "license": "Apache-2.0",
+      "used_by": [
+        "editor"
+      ]
+    },
+    {
+      "name": "hyperframes-cli",
+      "repo": "heygen-com/hyperframes",
+      "commit": "98f548447e44307d4c240cf100bfb15a5e362b2f",
+      "path": "skills/hyperframes-cli",
+      "license": "Apache-2.0",
+      "used_by": [
+        "editor"
+      ]
+    },
+    {
+      "name": "hyperframes-registry",
+      "repo": "heygen-com/hyperframes",
+      "commit": "98f548447e44307d4c240cf100bfb15a5e362b2f",
+      "path": "skills/hyperframes-registry",
+      "license": "Apache-2.0",
+      "used_by": [
+        "editor"
+      ]
+    },
+    {
+      "name": "media-use",
+      "repo": "heygen-com/hyperframes",
+      "commit": "98f548447e44307d4c240cf100bfb15a5e362b2f",
+      "path": "skills/media-use",
+      "license": "Apache-2.0",
+      "used_by": [
+        "editor",
+        "asset-hunter"
+      ]
+    },
+    {
+      "name": "find-skills",
+      "repo": "vercel-labs/skills",
+      "commit": "57217cf86ba38148a57af9e90d14a4c049558330",
+      "path": "skills/find-skills",
+      "license": "MIT",
+      "used_by": [
+        "interactive"
+      ]
+    },
+    {
+      "name": "real-sfx",
+      "repo": "Clipwing/skills",
+      "commit": "edbefcbc3474869e6cc1e8a7ca583b0efd0dab7e",
+      "path": "skills/real-sfx",
+      "license": "LICENSE fayli yo'q (repo ochiq) — git'ga qo'shilmaydi, o'rnatishda yuklanadi",
+      "used_by": [
+        "sound-designer"
+      ]
+    },
+    {
+      "name": "hyperframes-to-after-effects",
+      "repo": "Clipwing/skills",
+      "commit": "edbefcbc3474869e6cc1e8a7ca583b0efd0dab7e",
+      "path": "skills/hyperframes-to-after-effects",
+      "license": "LICENSE fayli yo'q",
+      "used_by": [
+        "interactive"
+      ]
+    },
+    {
+      "name": "earshot",
+      "repo": "Leonxlnx/earshot",
+      "commit": "4ac3d2ac2b151e1c23376f9ce7f3047a17050013",
+      "path": "skills/earshot",
+      "license": "MIT",
+      "used_by": [
+        "qa",
+        "sound-designer"
+      ]
+    },
+    {
+      "name": "premiere-pro-mcp",
+      "repo": "hetpatel-11/Adobe_Premiere_Pro_MCP",
+      "commit": "b866e6486749d25b3b4922002d2b49ffbbf6a43a",
+      "path": "skills/premiere-pro-mcp",
+      "license": "MIT",
+      "used_by": [
+        "interactive (Mac)"
+      ]
+    }
+  ],
+  "not_installed": [
+    {
+      "name": "video-storyboard",
+      "repo": "agentara/skills",
+      "reason": "image_gen tool talab qiladi (Codex/ChatGPT) — Claude Code'da yo'q"
+    }
+  ],
+  "tools": {
+    "earshot": {
+      "repo": "Leonxlnx/earshot",
+      "commit": "4ac3d2ac2b151e1c23376f9ce7f3047a17050013"
+    },
+    "after-effects-mcp": {
+      "repo": "a-y-ibrahim/after-effects-mcp",
+      "commit": "e9ffbed9f675a3ac31a4295c83abfd1fb4a7b3f5"
+    },
+    "premiere-pro-mcp": {
+      "npm": "adobe-premiere-pro-mcp",
+      "version": "1.2.11"
+    },
+    "voicelab-mcp": {
+      "repo": "voicelab-uz/mcp",
+      "commit": "3242550309086c6e783fe503b4e475dd80b58d73",
+      "note": "npm'da chop etilmagan — manbadan build qilinadi"
+    }
+  }
+}

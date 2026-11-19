@@ -36,6 +36,15 @@ RUN npm install -g "@anthropic-ai/claude-code@${CLAUDE_CODE_VERSION}" && npm cac
 COPY requirements.txt /tmp/requirements.txt
 RUN pip3 install --no-cache-dir --break-system-packages -r /tmp/requirements.txt
 
+# earshot — agentga "quloq" (ovoz/miks o'lchovi). CPU torch (~1.5GB). O'chirish: --build-arg WITH_EARSHOT=0
+ARG WITH_EARSHOT=1
+ARG EARSHOT_COMMIT=4ac3d2ac2b151e1c23376f9ce7f3047a17050013
+RUN if [ "$WITH_EARSHOT" = "1" ]; then \
+      pip3 install --no-cache-dir --break-system-packages torch --index-url https://download.pytorch.org/whl/cpu && \
+      pip3 install --no-cache-dir --break-system-packages \
+        "earshot[mcp] @ git+https://github.com/Leonxlnx/earshot.git@${EARSHOT_COMMIT}" ; \
+    fi
+
 WORKDIR /app
 # node_modules image ichida ham bo'lsin (bind-mount bo'lmagan holat uchun)
 COPY package.json package-lock.json ./

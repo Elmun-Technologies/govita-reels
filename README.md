@@ -4,7 +4,8 @@ Har kuni avtomatik **1 ta tayyor Instagram Reels** (video + cover + matn + hisob
 Telegram bot orqali yuboradigan multi-agent tizim. Lokal Docker'da, **Claude Max obunasi** orqali ishlaydi.
 
 ```
-Tadqiqot → Kopirayter ⇄ Compliance → Ovoz (ElevenLabs) → Kontent yig'uvchi → Montaj (HyperFrames) → Render → QA → Telegram
+Tadqiqot → Kopirayter ⇄ Compliance → Ovoz (ElevenLabs | VoiceLab) → Kontent yig'uvchi → Montaj (HyperFrames)
+        → Render → SFX (real-sfx) → QA (+ earshot) → Telegram
 ```
 
 Batafsil arxitektura, qoidalar va qarorlar: [CLAUDE.md](CLAUDE.md).
@@ -41,6 +42,23 @@ cp .env.example .env
 - `brand/music/*.mp3` — 3–5 ta litsenziyali trek
 - `brand/brand.json` — ranglar va shriftlar
 - `brand/products.json` — GoVita assortimenti
+
+### 4.1 Skill'lar va Mac MCP'lar
+Docker konteyner skill'larni o'zi o'rnatadi (`skills.lock.json`). Mac'da ham Claude Code bilan ishlash uchun **bir marta**:
+```bash
+bin/setup-mac        # global skill'lar + Premiere Pro, After Effects, VoiceLab, earshot MCP
+claude mcp list      # tekshirish
+```
+| Vosita | Nima uchun | Qayerda ishlaydi |
+|---|---|---|
+| hyperframes, hyperframes-cli, -registry, media-use | Montaj, render, tayyor bloklar, rang/audio | Docker pipeline (editor) |
+| real-sfx | Kesim/overlay'ga haqiqiy SFX (`brand/sfx/` kerak) | Docker pipeline (sound) |
+| earshot | Agentga "quloq": loudness, sync, miks tekshiruvi | Docker pipeline (QA) + Mac MCP |
+| find-skills | "… uchun skill top" — yangi skill qidirish | Mac / interaktiv |
+| Premiere Pro MCP + skill | `/premiere-polish` — bugungi videoni Premiere'da tahrir uchun yig'ish | Faqat Mac (Premiere ochiq) |
+| After Effects MCP, hyperframes-to-after-effects | AE'da motion, HyperFrames → AE | Faqat Mac |
+| VoiceLab MCP | O'zbekcha TTS/STT (MCP), pipeline'da `TTS_PROVIDER=voicelab` | Mac MCP + Docker |
+| Blender MCP | 3D sahnalar — qo'lda o'rnatiladi (`bin/setup-mac` oxirida yo'riqnoma) | Faqat Mac |
 
 ### 5. Ishga tushirish
 ```bash
@@ -96,3 +114,6 @@ CHROMIUM_PATH=$(which chromium || which google-chrome) pytest -m slow tests/   #
 | Ovoz noto'g'ri o'qiydi | `knowledge/pronunciation.json` ga almashtirish qo'shing; boshqa `ELEVENLABS_MODEL` sinang |
 | Video juda uzun/qisqa | `REEL_MIN_SECONDS` / `REEL_MAX_SECONDS` |
 | Mac qotib qoladi | `.env` da `DOCKER_CPUS=2`, `DOCKER_MEM=4g`, `RENDER_WORKERS=2` |
+| Docker image juda katta | `.env` da `WITH_EARSHOT=0` → `docker compose build` (earshot'siz, ~1.5GB kichik) |
+| SFX qo'shilmayapti | `brand/sfx/` ga wav/mp3 qo'ying → `docker compose exec agency bin/install-skills` |
+| Premiere MCP ulanmadi | Premiere → Window > Extensions > MCP Bridge (CEP) → Start; `premiere-pro-mcp --doctor` |

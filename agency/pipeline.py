@@ -4,7 +4,7 @@
     python -m agency.pipeline healthcheck          # bugungi video yuborilmagan bo'lsa alert
     python -m agency.pipeline status [--date ...]  # bosqichlar holati
 
-Bosqichlar: research → copy ⇄ compliance → tts → assets → edit → render → qa ⇄ edit → send → finalize
+Bosqichlar: research → copy ⇄ compliance → tts → assets → edit → render → sound → qa ⇄ edit → send → finalize
 Har bosqich `.stages/<stage>.done` marker yozadi → qayta ishga tushirilsa joyidan davom etadi.
 """
 from __future__ import annotations
@@ -19,12 +19,12 @@ from pathlib import Path
 
 from . import state, telegram
 from .claude_runner import AgentError, run_agent
-from .config import TZ, RunPaths, env_bool, env_int, today
+from .config import ROOT, TZ, RunPaths, env, env_bool, env_int, today
 from .tools import build_composition, cover, qa_check, render
-from .util import log, read_json, run, write_json
+from .util import log, media_duration, read_json, run, write_json
 from .validate import ContractError, validate
 
-STAGES = ["research", "copy", "compliance", "tts", "assets", "edit", "render", "qa", "send", "finalize"]
+STAGES = ["research", "copy", "compliance", "tts", "assets", "edit", "render", "sound", "qa", "send", "finalize"]
 END_CARD_PAD = 1.85  # 0.25s pauza + 1.6s end-card
 
 
@@ -171,6 +171,45 @@ def stage_render(paths: RunPaths) -> None:
     cover.build_cover(paths)
 
 
+def sfx_enabled() -> bool:
+    mode = env("SFX_ENABLED", "auto").lower()
+    if mode in {"0", "off", "false", "no"}:
+        return False
+    skill = ROOT / ".claude" / "skills" / "real-sfx" / "SKILL.md"
+    sfx_dir = Path(env("SFX_LIBRARY_DIR", str(ROOT / "brand" / "sfx")))
+    has_audio = sfx_dir.exists() and any(p.suffix.lower() in {".wav", ".mp3", ".ogg", ".flac", ".aif", ".aiff"}
+                                         for p in sfx_dir.rglob("*"))
+    return skill.exists() and (has_audio or mode in {"1", "on", "true", "yes"})
+
+
+def stage_sound(paths: RunPaths) -> None:
+    """real-sfx: kesim va overlay'larga haqiqiy SFX. Ovoz va musiqa saqlanadi."""
+    if not sfx_enabled():
+        _log(paths, "sound: o'tkazib yuborildi (brand/sfx bo'sh yoki SFX_ENABLED=off)")
+        return
+    out = paths.p("final_sfx.mp4")
+    out.unlink(missing_ok=True)
+    task = f"""Sana: {paths.date}. Ish papkasi: {paths.dir}
+Video: {paths.final_video}. HyperFrames composition: {paths.composition}. Timeline: {paths.timeline}.
+real-sfx skill bilan videoga haqiqiy SFX qo'y va natijani {out} ga yoz.
+Ishchi fayllar: {paths.dir}/sfx_work/ (skill papkasini o'zgartirma)."""
+    _agent("sound-designer", task, paths, "sound", timeout_min=env_int("SOUND_TIMEOUT_MIN", 30))
+    if not out.exists():
+        rs_warn = "sound: SFX versiya yaratilmadi — SFX'siz video yuboriladi"
+        _log(paths, rs_warn)
+        return
+    base, new = media_duration(paths.final_video), media_duration(out)
+    if abs(base - new) > 0.5:
+        _log(paths, f"sound: davomiylik mos emas ({base:.1f}s vs {new:.1f}s) — SFX versiya rad etildi")
+        return
+    nosfx = paths.p("final_nosfx.mp4")
+    shutil.copy2(paths.final_video, nosfx)
+    run(["ffmpeg", "-y", "-v", "error", "-i", out, "-c:v", "copy",
+         "-af", "loudnorm=I=-14:TP=-1.5:LRA=11", "-c:a", "aac", "-b:a", "192k", "-ar", "48000",
+         "-movflags", "+faststart", paths.final_video], timeout=900)
+    _log(paths, "sound: SFX qo'shildi (asl versiya: final_nosfx.mp4)")
+
+
 def stage_qa(paths: RunPaths) -> dict:
     auto = qa_check.check(paths)
     task = f"""Sana: {paths.date}. Avtomatik tekshiruv: {paths.p('qa_auto.json')}
@@ -314,6 +353,9 @@ def run_pipeline(date: str, start_from: str | None = None, idea: str | None = No
         if not _done(paths, "render"):
             stage_render(paths)
             _mark(paths, "render")
+        if not _done(paths, "sound"):
+            stage_sound(paths)
+            _mark(paths, "sound")
         result = stage_qa(paths)
         _log(paths, f"qa: {result['status']}")
         if result["status"] == "PASS" or (result["status"] == "FAIL" and rs["edit_loops"] >= max_edit

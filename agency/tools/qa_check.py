@@ -12,7 +12,7 @@ import re
 import shutil
 from pathlib import Path
 
-from ..config import RunPaths, env_int
+from ..config import RunPaths, env, env_int
 from ..util import ffprobe, print_json, run, write_json
 
 MIN_S, MAX_S = env_int("REEL_MIN_SECONDS", 40), env_int("REEL_MAX_SECONDS", 90)
@@ -23,6 +23,17 @@ def loudness(path: Path) -> float | None:
                 "-f", "null", "-"], check=False, timeout=600)
     m = re.search(r"I:\s*(-?\d+(?:\.\d+)?)\s*LUFS", proc.stderr.split("Summary:")[-1])
     return float(m.group(1)) if m else None
+
+
+def _earshot(paths: RunPaths) -> dict | None:
+    """earshot (o'rnatilgan bo'lsa): ovoz/miks bo'yicha o'lchangan tanqid — QA agent o'qiydi."""
+    if env("EARSHOT_ENABLED", "auto").lower() in {"0", "off", "false"} or not shutil.which("earshot"):
+        return None
+    out = paths.p("earshot_critique.json")
+    proc = run(["earshot", "critique", paths.final_video, "--fast", "--json", "--out", out,
+                "--threads", env("EARSHOT_THREADS", "3")], check=False, timeout=900)
+    return {"ok": proc.returncode == 0, "file": str(out) if out.exists() else None,
+            "summary": (proc.stdout or proc.stderr)[-1200:]}
 
 
 def check(paths: RunPaths) -> dict:
@@ -61,8 +72,10 @@ def check(paths: RunPaths) -> dict:
         run(["ffmpeg", "-y", "-v", "error", "-i", paths.cover, "-vf", "scale=540:-2", frames / "cover.jpg"],
             check=False)
 
+    earshot = _earshot(paths)
     result = {
         "passed": all(checks.values()),
+        "earshot": earshot,
         "checks": checks,
         "metrics": {"duration_s": round(duration, 2), "fps": round(fps, 2), "lufs": lufs, "bytes": size,
                     "width": v.get("width"), "height": v.get("height")},

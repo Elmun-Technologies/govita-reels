@@ -27,6 +27,6 @@ Ssenariy (`scenes[].visual_brief`, `voiceover`), `alignment.json` (har sahna dav
 `scenes[].items[]`: `key` (masalan `pexels:123`), `path` (tool qaytargan `path`), `kind`, `role`, `license`, `duration`, ixtiyoriy `media_start` (klipning eng yaxshi qismi) va `note`.
 `cover_candidates` — cover uchun eng kuchli 2–3 ta fayl yo'li (aniq yuz/emotsiya, bo'sh joy matn uchun).
 
-Ixtiyoriy manbalar: `ADOBE_STOCK_ENABLED` / `AIRSHOT_ENABLED` hozircha o'chiq — ularni ishlatma (Adobe fayllar `bank/adobe/` da bo'lsa, `bank` qidiruvi ularni ham topadi).
+Ixtiyoriy: `ADOBE_STOCK_ENABLED` hozircha o'chiq (Adobe fayllar `bank/adobe/` da bo'lsa, `bank` qidiruvi ularni ham topadi). Kadr qorong'i/xira bo'lsa — `media-use` skill'idagi rang/yorqinlik bo'limiga qarab editor'ga `note` yoz.
 
 Tugatgach: `python -m agency.validate assets <fayl>` → `OK`. Oxirgi javob: nechta asset, nechtasi bankdan.

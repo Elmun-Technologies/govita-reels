@@ -54,3 +54,22 @@ def test_ranked_ideas_prefers_chosen():
     assert _ranked_ideas(brief)[0] == "A"
     brief["chosen"] = "C"
     assert _ranked_ideas(brief)[0] == "C"
+
+
+def test_voicelab_align_matches_and_interpolates():
+    from agency.tts.voicelab import align_words
+    from agency.tools.tts import words_from_chars
+    text = "Ertalab charchab uyg‘onish — bu dangasalik emas."
+    stt = [{"text": "ertalab", "start_ms": 100, "end_ms": 600},
+           {"text": "charchab", "start_ms": 650, "end_ms": 1200},
+           {"text": "uyg'onish", "start_ms": 1250, "end_ms": 1900},
+           {"text": "bu", "start_ms": 2100, "end_ms": 2250},
+           {"text": "dangasa", "start_ms": 2300, "end_ms": 2900},   # STT xatosi
+           {"text": "emas", "start_ms": 2950, "end_ms": 3300}]
+    chars, starts, ends = align_words(text, stt)
+    words = words_from_chars(chars, starts, ends, [(1, 0, len(text))])
+    assert [w["text"] for w in words] == text.split()
+    assert words[0]["start"] == 0.1 and abs(words[1]["end"] - 1.2) < 0.01
+    assert all(w["start"] <= w["end"] for w in words)
+    assert all(a["end"] <= b["start"] + 1e-6 for a, b in zip(words, words[1:]))
+    assert abs(words[-1]["end"] - 3.3) < 0.01

@@ -16,7 +16,10 @@ GoVita (govita.uz — O'zbekistondagi onlayn vitamin, sport nutrition va apteka 
 - Mavzu — o'zbek odamlarining real sog'liq og'riqlari (`knowledge/uz-audience-pains.md`), oxirgi 60 kunda takrorlanmaydi.
 - Compliance qat'iy (`knowledge/compliance-rules.md`): davolash kafolati, tashxis, doza tavsiyasi, before/after — yo'q. Har raqam manbali.
 - Media faqat litsenziyali (Pexels, Pixabay, Adobe Stock litsenziyalangan bank). YouTube/raqobatchi kontenti faqat **tahlil** qilinadi, montajda ishlatilmaydi.
-- Ovoz: ElevenLabs (bu loyiha uchun mijoz qarori). Provider adapter orqali almashtiriladi (`agency/tts/`).
+- Ovoz: ElevenLabs (bu loyiha uchun mijoz qarori, default). VoiceLab (o'zbekcha nativ) ham tayyor: `TTS_PROVIDER=voicelab`.
+  VoiceLab timestamp bermaydi → STT bilan so'z timing olinadi va asl matnga moslanadi (`agency/tts/voicelab.py`).
+- SFX faqat haqiqiy yozilgan tovushlardan (real-sfx, `brand/sfx/`), sintez yo'q. Agentlar eshita olmaydi — ovoz haqida
+  faqat o'lchangan raqamlar (earshot) bilan gapiriladi.
 
 ## 3. Arxitektura
 ```
@@ -28,7 +31,8 @@ supercronic 05:00 → bin/run-daily (flock + timeout) → python -m agency.pipel
   assets     claude -p --agent asset-hunter  → assets.json + bank/
   edit       claude -p --agent editor        → timeline.json → build_composition → composition/ (HyperFrames)
   render     agency.tools.render + cover     → final.mp4 (−14 LUFS, ≤45MB) + cover.jpg
-  qa         qa_check (auto) + claude -p --agent qa → qa.json   FAIL → edit (≤2)
+  sound      claude -p --agent sound-designer (real-sfx) → SFX qo'shilgan final.mp4   (brand/sfx bo'sh bo'lsa o'tkaziladi)
+  qa         qa_check (auto + earshot) + claude -p --agent qa → qa.json   FAIL → edit (≤2)
   send       Telegram: video, cover (doc), caption, pin-komment, hisobot (👍/👎/🔁)
   finalize   state.sqlite (mavzu, hook, asset), oraliq fayllarni tozalash
 ```
@@ -53,6 +57,8 @@ Max obuna: har agent alohida `claude -p` jarayoni; auth — `CLAUDE_CODE_OAUTH_T
 | `agency/tts/` | TTS adapterlari: `elevenlabs`, `silent` (test) |
 | `.claude/agents/` | 6 ta subagent |
 | `.claude/skills/govita-video/` | **Mijozning montaj skill'i** (hozir placeholder) |
+| `.claude/skills/*` (boshqalar) | Tashqi skill'lar — `skills.lock.json` (pinned commit), `bin/install-skills` o'rnatadi, git'da yo'q |
+| `bin/setup-mac` | Mac: global skill'lar + Premiere / After Effects / VoiceLab / earshot MCP |
 | `schemas/` | Agentlar orasidagi JSON-kontraktlar |
 | `templates/reel/`, `templates/cover/` | HyperFrames va cover HTML shablonlari |
 | `knowledge/` | Auditoriya og'riqlari, hooklar, compliance, rubrikalar, raqobatchilar, talaffuz, YouTube so'rovlari |
@@ -74,6 +80,8 @@ docker compose exec agency bin/run-daily           # bugungi pipeline (yoki davo
 docker compose exec agency bin/run-daily --from edit        # montajdan qayta
 docker compose exec agency bin/run-daily --idea next        # boshqa g'oya bilan
 docker compose exec agency python3 -m agency.pipeline status
+bin/install-skills [--global] [--check]            # tashqi skill'lar
+bin/setup-mac                                      # Mac: MCP'lar (Premiere, AE, VoiceLab, earshot)
 docker compose logs -f agency
 pytest tests/test_units.py                         # tez testlar
 pytest -m slow tests/                              # render + soxta-claude pipeline testlari
@@ -96,11 +104,17 @@ Telegram: `/status`, `/run`, `/regen`, tugmalar 👍 / 👎 / 🔁.
 | Meta Ad Library — headless brauzer | Rasmiy API faqat siyosiy/EU reklamalarni beradi |
 | Debian chromium (Playwright browser emas) | Mac arm64 + x86 da bitta yo'l |
 | Bind-mount repo + `node_modules` volume | VS Code'da tahrir darhol konteynerda; `git pull` bilan yangilanish |
-| AirShot va Adobe Stock API o'chiq | AirShot'ning ochiq API'si topilmadi; Adobe fayllari bank orqali qayta ishlatiladi |
+| Adobe Stock API o'chiq | Adobe fayllari bank orqali qayta ishlatiladi |
+| "AirShot" = **earshot** (Leonxlnx/earshot) | Agentga "quloq": QA'da ovoz/miks o'lchovi; Docker'da `WITH_EARSHOT=1` |
+| Tashqi skill'lar vendor qilinmaydi, lock + installer | Litsenziya (Clipwing/skills'da LICENSE yo'q), yangilash oson, repo yengil |
+| Premiere/AE MCP faqat Mac'da, interaktiv (`/premiere-polish`) | Ular GUI ilova + CEP/ScriptUI panel talab qiladi; soat 05:00 dagi avtomatik pipeline'da ishonchsiz. Avtomatik render — HyperFrames |
+| video-storyboard skill o'rnatilmadi | `image_gen` tool talab qiladi (Codex/ChatGPT), Claude Code'da yo'q |
 
 ## 10. Uchinchi tomon integratsiyalar
 YouTube Data API v3 (kvota 10k/kun, ~2.5k sarf) · yt-dlp · Meta Ad Library (veb) · Pexels API · Pixabay API ·
-ElevenLabs `/v1/text-to-speech/{voice}/with-timestamps` · Telegram Bot API (sendVideo ≤50MB) · Claude Code CLI (Max).
+ElevenLabs `/v1/text-to-speech/{voice}/with-timestamps` · VoiceLab `/v1/tts` + `/v1/stt` · Telegram Bot API (sendVideo ≤50MB) ·
+Claude Code CLI (Max) · Skill'lar: hyperframes, hyperframes-cli, hyperframes-registry, media-use, find-skills, real-sfx,
+hyperframes-to-after-effects, earshot, premiere-pro-mcp · Mac MCP: Premiere Pro (CEP), After Effects, VoiceLab, earshot, Blender (qo'lda).
 
 ## 11. Glossary
 - **Hook** — videoning birinchi 0–3 soniyasidagi diqqatni ushlovchi jumla
@@ -118,6 +132,9 @@ ElevenLabs `/v1/text-to-speech/{voice}/with-timestamps` · Telegram Bot API (sen
 - Stok klip shot'dan qisqa bo'lsa kadr muzlaydi → `build_composition` warning beradi.
 - Telegram bot 50MB limit → render CRF'ni avtomatik oshiradi.
 - Max limiti tugasa agent xato beradi → Telegram alert, keyin `bin/run-daily` bilan davom.
+- earshot birinchi ishga tushishda CLAP+AST modellarini yuklaydi (~1GB, `model_cache` volume) — birinchi QA sekin.
+- Premiere MCP telemetriyasi default yoqiq — `bin/setup-mac` uni o'chiradi (`~/.premiere-mcp-bridge/config.json`).
+- `@voicelab/mcp` npm'da chop etilmagan — manbadan build qilinadi.
 
 ## 13. TODO
 - [ ] Mijozning `govita-video` skill'ini qo'yish
@@ -127,7 +144,8 @@ ElevenLabs `/v1/text-to-speech/{voice}/with-timestamps` · Telegram Bot API (sen
 - [ ] ElevenLabs o'zbekcha ovozni tanlash va talaffuzni sinash
 - [ ] Haftalik `weekly_review` agenti (👍/👎 → hook-library yangilash)
 - [ ] Instagram'ga avtomatik joylash (Meta Graph API) — ixtiyoriy, qo'lda tasdiqdan keyin
-- [ ] AirShot integratsiyasi — aniq servis va API tasdiqlangach
+- [ ] `brand/sfx/` ga haqiqiy SFX pak (whoosh/hit/pop/riser) — sound bosqichi shundan keyin yoqiladi
+- [ ] Mustafo skill paki (mustafo-montaj-usuli, reels-zonali-montaj, viral-reels-scriptwriter …) — arxiv kelgach integratsiya
 
 ## 14. Kelajakdagi yaxshilanishlar
 - Haqiqiy Instagram statistikasi (reach, saqlash, komment) bilan mavzu tanlovini o'qitish

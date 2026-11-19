@@ -13,8 +13,10 @@ import subprocess
 from .config import ROOT, env
 from .util import http
 
-REQUIRED = ["CLAUDE_CODE_OAUTH_TOKEN", "ELEVENLABS_API_KEY", "ELEVENLABS_VOICE_ID", "YOUTUBE_API_KEY",
-            "PEXELS_API_KEY", "PIXABAY_API_KEY", "TELEGRAM_BOT_TOKEN", "TELEGRAM_CHAT_ID"]
+BASE_REQUIRED = ["CLAUDE_CODE_OAUTH_TOKEN", "YOUTUBE_API_KEY", "PEXELS_API_KEY", "PIXABAY_API_KEY",
+                 "TELEGRAM_BOT_TOKEN", "TELEGRAM_CHAT_ID"]
+TTS_KEYS = {"elevenlabs": ["ELEVENLABS_API_KEY", "ELEVENLABS_VOICE_ID"],
+            "voicelab": ["VOICELAB_API_KEY", "VOICELAB_VOICE_ID"], "silent": []}
 
 
 def _ok(name: str, ok: bool, detail: str = "") -> bool:
@@ -37,7 +39,9 @@ def main() -> None:
     results = []
 
     print("— Env kalitlari")
-    for key in REQUIRED:
+    provider = env("TTS_PROVIDER", "elevenlabs").lower()
+    print(f"  TTS_PROVIDER={provider}")
+    for key in BASE_REQUIRED + TTS_KEYS.get(provider, []):
         results.append(_ok(key, bool(env(key)), "" if env(key) else ".env da yo'q"))
 
     print("— Tizim")
@@ -52,6 +56,16 @@ def main() -> None:
     music = list((ROOT / "brand/music").glob("*.mp3"))
     _ok("brand/music", bool(music), f"{len(music)} trek" if music else "musiqa yo'q (ixtiyoriy)")
 
+    print("— Skill'lar va ovoz vositalari")
+    lock = json.loads((ROOT / "skills.lock.json").read_text(encoding="utf-8"))
+    for sk in lock["skills"]:
+        meta = ROOT / ".claude" / "skills" / sk["name"] / ".source.json"
+        ok = meta.exists() and json.loads(meta.read_text()).get("commit") == sk["commit"]
+        results.append(_ok(f"skill {sk['name']}", ok, "" if ok else "bin/install-skills"))
+    _ok("earshot", shutil.which("earshot") is not None, "" if shutil.which("earshot") else "o'rnatilmagan (ixtiyoriy)")
+    from .pipeline import sfx_enabled
+    _ok("real-sfx kutubxona (brand/sfx)", sfx_enabled(), "" if sfx_enabled() else "bo'sh — sound bosqichi o'tkaziladi")
+
     print("— API'lar")
     if env("YOUTUBE_API_KEY"):
         results.append(_try("YouTube Data API", lambda: http(
@@ -65,12 +79,14 @@ def main() -> None:
         results.append(_try("Pixabay", lambda: http("GET", "https://pixabay.com/api/",
                                                     params={"key": env("PIXABAY_API_KEY"), "q": "vitamin",
                                                             "per_page": 3}) and "ok"))
-    if env("ELEVENLABS_API_KEY") and env("ELEVENLABS_VOICE_ID"):
+    if provider == "elevenlabs" and env("ELEVENLABS_API_KEY") and env("ELEVENLABS_VOICE_ID"):
         def _el():
             v = http("GET", f"https://api.elevenlabs.io/v1/voices/{env('ELEVENLABS_VOICE_ID')}",
                      headers={"xi-api-key": env("ELEVENLABS_API_KEY")}).json()
             return f"ovoz: {v.get('name')}"
         results.append(_try("ElevenLabs", _el))
+    if provider == "voicelab" and env("VOICELAB_API_KEY"):
+        results.append(_try("VoiceLab", lambda: f"{len(http('GET', 'https://api.voicelab.uz/v1/voices', headers={'Authorization': 'Bearer ' + env('VOICELAB_API_KEY')}).json().get('data', []))} ta ovoz"))
     if env("TELEGRAM_BOT_TOKEN"):
         def _tg():
             me = http("GET", f"https://api.telegram.org/bot{env('TELEGRAM_BOT_TOKEN')}/getMe").json()["result"]

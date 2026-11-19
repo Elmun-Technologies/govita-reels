@@ -1,0 +1,97 @@
+#!/usr/bin/env bash
+# Mac (host) sozlamasi: global skill'lar + desktop MCP'lar.
+#   Premiere Pro MCP · After Effects MCP · VoiceLab MCP · earshot MCP · find-skills va boshqa skill'lar
+# Foydalanish:  bin/setup-mac [--skip-earshot] [--skip-ae] [--skip-premiere] [--skip-voicelab]
+# Xavfsiz qayta ishga tushirish mumkin (idempotent).
+set -euo pipefail
+cd "$(dirname "$0")/.."
+REPO="$(pwd)"
+TOOLS="${GOVITA_TOOLS_DIR:-$HOME/.govita-tools}"
+mkdir -p "$TOOLS"
+
+SKIP_EARSHOT=0; SKIP_AE=0; SKIP_PREMIERE=0; SKIP_VOICELAB=0
+for a in "$@"; do
+  case "$a" in
+    --skip-earshot) SKIP_EARSHOT=1 ;; --skip-ae) SKIP_AE=1 ;;
+    --skip-premiere) SKIP_PREMIERE=1 ;; --skip-voicelab) SKIP_VOICELAB=1 ;;
+  esac
+done
+
+lock() { python3 -c "import json,sys;d=json.load(open('skills.lock.json'));print(d['tools']['$1']['$2'])"; }
+need() { command -v "$1" >/dev/null 2>&1 || { echo "❌ '$1' topilmadi — o'rnating: $2"; exit 1; }; }
+step() { printf '\n\033[1m▶ %s\033[0m\n' "$1"; }
+pin_clone() {  # repo commit dir
+  if [ ! -d "$3/.git" ]; then git init -q "$3" && git -C "$3" remote add origin "https://github.com/$1.git"; fi
+  git -C "$3" fetch -q --depth 1 origin "$2" && git -C "$3" checkout -q FETCH_HEAD
+}
+mcp_add() {  # name, then args after --
+  local name="$1"; shift
+  claude mcp remove "$name" --scope user >/dev/null 2>&1 || true
+  claude mcp add "$name" --scope user "$@"
+}
+
+need node "brew install node"
+need git "xcode-select --install"
+need python3 "brew install python"
+need claude "npm install -g @anthropic-ai/claude-code"
+[ -f .env ] && set -a && . ./.env && set +a
+
+step "1/5 Skill'lar → ~/.claude/skills (hyperframes, find-skills, real-sfx, earshot, premiere-pro-mcp ...)"
+python3 -m agency.skills_install --global
+python3 -m agency.skills_install            # loyiha ichiga ham (.claude/skills)
+
+if [ "$SKIP_PREMIERE" = 0 ]; then
+  step "2/5 Premiere Pro MCP (CEP bridge)"
+  npm install -g "adobe-premiere-pro-mcp@$(lock premiere-pro-mcp version)"
+  premiere-pro-mcp --install-cep
+  mkdir -p "$HOME/.premiere-mcp-bridge"
+  python3 - <<'PY'
+import json, pathlib
+p = pathlib.Path.home() / ".premiere-mcp-bridge" / "config.json"
+cfg = json.loads(p.read_text()) if p.exists() else {}
+cfg["telemetry"] = False   # anonim telemetriya o'chiriladi
+p.write_text(json.dumps(cfg, indent=2))
+PY
+  premiere-pro-mcp --doctor || true
+  echo "ℹ Premiere'ni qayta oching → Window > Extensions > MCP Bridge (CEP) → Start."
+fi
+
+if [ "$SKIP_AE" = 0 ]; then
+  step "3/5 After Effects MCP"
+  pin_clone a-y-ibrahim/after-effects-mcp "$(lock after-effects-mcp commit)" "$TOOLS/after-effects-mcp"
+  (cd "$TOOLS/after-effects-mcp" && npm install --no-audit --no-fund && npm run install-bridge)
+  mcp_add after-effects -- node "$TOOLS/after-effects-mcp/build/index.js"
+  echo "ℹ After Effects > Settings > Scripting & Expressions → \"Allow Scripts to Write Files and Access Network\" yoqing, AE ni qayta oching, Window > mcp-bridge-auto.jsx panelini ochiq qoldiring."
+fi
+
+if [ "$SKIP_VOICELAB" = 0 ]; then
+  step "4/5 VoiceLab MCP (o'zbekcha TTS/STT)"
+  pin_clone voicelab-uz/mcp "$(lock voicelab-mcp commit)" "$TOOLS/voicelab-mcp"
+  (cd "$TOOLS/voicelab-mcp" && npm install --no-audit --no-fund && npm run build)
+  if [ -n "${VOICELAB_API_KEY:-}" ]; then
+    mcp_add voicelab -e "VOICELAB_API_KEY=$VOICELAB_API_KEY" -- node "$TOOLS/voicelab-mcp/dist/index.js"
+  else
+    echo "⚠ VOICELAB_API_KEY .env da yo'q — kalitni qo'shib, bin/setup-mac ni qayta ishga tushiring"
+  fi
+fi
+
+if [ "$SKIP_EARSHOT" = 0 ]; then
+  step "5/5 earshot (ovoz tekshiruvi, CPU modellar)"
+  python3 -m venv "$TOOLS/earshot-venv"
+  "$TOOLS/earshot-venv/bin/pip" install -q --upgrade pip
+  "$TOOLS/earshot-venv/bin/pip" install -q "earshot[mcp] @ git+https://github.com/Leonxlnx/earshot.git@$(lock earshot commit)"
+  mkdir -p "$HOME/.local/bin" && ln -sf "$TOOLS/earshot-venv/bin/earshot" "$HOME/.local/bin/earshot"
+  mcp_add earshot -e EARSHOT_THREADS=3 -- "$TOOLS/earshot-venv/bin/python" -m earshot mcp
+  "$TOOLS/earshot-venv/bin/earshot" doctor || true
+fi
+
+cat <<'TXT'
+
+✅ Tayyor. Claude Code'ni qayta oching va tekshiring:  claude mcp list
+
+Qo'lda qilinadigan (bir marta):
+  • Blender MCP (rasmiy): blender.org/lab/mcp-server sahifasidagi o'rnatish havolasini Blender oynasiga sudrab
+    tashlang (2 marta: avval repo, keyin add-on) → Claude Desktop: Customize > Connectors > Blender.
+  • Premiere: Window > Extensions > MCP Bridge (CEP) → bridge papkasini tanlang → Start.
+  • Yangi skill qidirish: Claude'ga "… uchun skill top" deng (find-skills) yoki: npx skills find <so'z>
+TXT
