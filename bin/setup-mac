@@ -39,6 +39,10 @@ need claude "npm install -g @anthropic-ai/claude-code"
 step "1/5 Skill'lar → ~/.claude/skills (hyperframes, find-skills, real-sfx, earshot, premiere-pro-mcp ...)"
 python3 -m agency.skills_install --global
 python3 -m agency.skills_install            # loyiha ichiga ham (.claude/skills)
+# watch (YouTube ko'rish): yt-dlp + ffmpeg kerak; captions-first, whisper yuklamaydi
+command -v yt-dlp >/dev/null || brew install yt-dlp ffmpeg deno
+python3 "$HOME/.claude/skills/watch/scripts/setup.py" --engine "${WATCH_ENGINE:-auto}" --backend none \
+  --detail "${WATCH_DETAIL:-efficient}" || true
 
 if [ "$SKIP_PREMIERE" = 0 ]; then
   step "2/5 Premiere Pro MCP (CEP bridge)"

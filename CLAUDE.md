@@ -41,6 +41,18 @@ Deterministik ishlar — Python tool'lar. Timing ovozdan (alignment) olinadi →
 
 Har bosqich `runs/DATE/.stages/<stage>.done` yozadi → qayta ishga tushirilsa joyidan davom etadi.
 Max obuna: har agent alohida `claude -p` jarayoni; auth — `CLAUDE_CODE_OAUTH_TOKEN` (`claude setup-token`).
+Ruxsatlar: default `AGENT_PERMISSION_MODE=allowlist` (`--permission-mode acceptEdits` + `.claude/settings.json` allow ro'yxati).
+`bypass` faqat izolyatsiyalangan non-root Docker uchun.
+
+### Ishga tushirish rejimlari
+| Rejim | Qanday | Holat |
+|---|---|---|
+| **Bulut (asosiy)** | Claude Code scheduled task → `bin/cloud-run` | Har run yangi sessiya; holat `state` branch'da (`agency/state_sync.py`) |
+| Docker (Mac/server) | `docker compose up -d` → supercronic 05:00 | Lokal `data/`, `runs/`, `bank/` |
+| Qo'lda | `bin/run-daily` / `/daily-reel` | Lokal |
+
+Bulutdagi cheklovlar: YouTube video **faylini** yuklash bloklanadi (403) → `watch` faqat transkript (Gemini kaliti bo'lsa
+to'liq); Meta Ad Library 403 → WebSearch; Premiere/AE/Blender yo'q (GUI). earshot bulutda o'rnatilmaydi (torch og'ir).
 
 ## 4. Stack
 - Docker (node:22-bookworm-slim) + Debian chromium + ffmpeg + Python 3.11 + supercronic
@@ -54,11 +66,13 @@ Max obuna: har agent alohida `claude -p` jarayoni; auth — `CLAUDE_CODE_OAUTH_T
 |---|---|
 | `agency/` | Python paket: `pipeline.py` (orkestr), `claude_runner.py`, `telegram.py`, `state.py`, `validate.py`, `bot_listener.py`, `doctor.py` |
 | `agency/tools/` | Agentlar chaqiradigan CLI tool'lar (yt_trends, yt_transcripts, ad_library, stock_search, tts, build_composition, render, cover, qa_check) |
-| `agency/tts/` | TTS adapterlari: `elevenlabs`, `silent` (test) |
+| `agency/tts/` | TTS adapterlari: `elevenlabs`, `voicelab`, `silent` (test) |
 | `.claude/agents/` | 6 ta subagent |
 | `.claude/skills/govita-video/` | **Mijozning montaj skill'i** (hozir placeholder) |
 | `.claude/skills/*` (boshqalar) | Tashqi skill'lar — `skills.lock.json` (pinned commit), `bin/install-skills` o'rnatadi, git'da yo'q |
 | `bin/setup-mac` | Mac: global skill'lar + Premiere / After Effects / VoiceLab / earshot MCP |
+| `bin/cloud-run` | Bulut: bog'liqliklar → skill'lar → state pull → pipeline → state push |
+| `state` branch | Avtomatik holat (sqlite, run JSON/log, bank indeksi, agent o'rgangan knowledge) — qo'lda tahrirlanmaydi |
 | `schemas/` | Agentlar orasidagi JSON-kontraktlar |
 | `templates/reel/`, `templates/cover/` | HyperFrames va cover HTML shablonlari |
 | `knowledge/` | Auditoriya og'riqlari, hooklar, compliance, rubrikalar, raqobatchilar, talaffuz, YouTube so'rovlari |
@@ -108,13 +122,15 @@ Telegram: `/status`, `/run`, `/regen`, tugmalar 👍 / 👎 / 🔁.
 | "AirShot" = **earshot** (Leonxlnx/earshot) | Agentga "quloq": QA'da ovoz/miks o'lchovi; Docker'da `WITH_EARSHOT=1` |
 | Tashqi skill'lar vendor qilinmaydi, lock + installer | Litsenziya (Clipwing/skills'da LICENSE yo'q), yangilash oson, repo yengil |
 | Premiere/AE MCP faqat Mac'da, interaktiv (`/premiere-polish`) | Ular GUI ilova + CEP/ScriptUI panel talab qiladi; soat 05:00 dagi avtomatik pipeline'da ishonchsiz. Avtomatik render — HyperFrames |
+| `watch` skill (bradautomates/claude-video) researcher'da | Top outlier videolarning hook/ritm/kadrini ko'rish; captions-first, whisper yuklanmaydi |
+| Agent ruxsatlari allowlist bilan, bypass emas | Xavfsizroq; root ostida ham ishlaydi (bulut) |
 | video-storyboard skill o'rnatilmadi | `image_gen` tool talab qiladi (Codex/ChatGPT), Claude Code'da yo'q |
 
 ## 10. Uchinchi tomon integratsiyalar
 YouTube Data API v3 (kvota 10k/kun, ~2.5k sarf) · yt-dlp · Meta Ad Library (veb) · Pexels API · Pixabay API ·
 ElevenLabs `/v1/text-to-speech/{voice}/with-timestamps` · VoiceLab `/v1/tts` + `/v1/stt` · Telegram Bot API (sendVideo ≤50MB) ·
 Claude Code CLI (Max) · Skill'lar: hyperframes, hyperframes-cli, hyperframes-registry, media-use, find-skills, real-sfx,
-hyperframes-to-after-effects, earshot, premiere-pro-mcp · Mac MCP: Premiere Pro (CEP), After Effects, VoiceLab, earshot, Blender (qo'lda).
+hyperframes-to-after-effects, earshot, premiere-pro-mcp, watch (YouTube ko'rish) · Mac MCP: Premiere Pro (CEP), After Effects, VoiceLab, earshot, Blender (qo'lda).
 
 ## 11. Glossary
 - **Hook** — videoning birinchi 0–3 soniyasidagi diqqatni ushlovchi jumla
@@ -142,6 +158,7 @@ hyperframes-to-after-effects, earshot, premiere-pro-mcp · Mac MCP: Premiere Pro
 - [ ] `brand/products.json` — haqiqiy assortiment
 - [ ] Disklaymer matnini yurist bilan tasdiqlash (`knowledge/compliance-rules.md`)
 - [ ] ElevenLabs o'zbekcha ovozni tanlash va talaffuzni sinash
+- [ ] Bulut muhitiga kalitlarni qo'shish (+ `CLAUDE_CODE_OAUTH_TOKEN`) → scheduled task yaratish → test run
 - [ ] Haftalik `weekly_review` agenti (👍/👎 → hook-library yangilash)
 - [ ] Instagram'ga avtomatik joylash (Meta Graph API) — ixtiyoriy, qo'lda tasdiqdan keyin
 - [ ] `brand/sfx/` ga haqiqiy SFX pak (whoosh/hit/pop/riser) — sound bosqichi shundan keyin yoqiladi

@@ -189,6 +189,8 @@ def cmd_bank(args) -> None:
     for item in _index():
         if args.kind and item["kind"] != args.kind:
             continue
+        if not Path(item["path"]).exists():  # bulutda media saqlanmaydi — qayta `download` qilinadi
+            continue
         hay = _tokens(" ".join(item.get("tags", [])) + " " + Path(item["path"]).stem.replace("-", " "))
         score = len(q & hay)
         if score:

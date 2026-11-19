@@ -37,9 +37,14 @@ def run_agent(agent: str, task: str, *, date: str, stage: str, timeout_min: int 
         claude_bin, "-p", task,
         "--agent", agent,
         "--output-format", "json",
-        "--dangerously-skip-permissions",
         "--no-session-persistence",
     ]
+    # Ruxsatlar: default — .claude/settings.json allowlist (+ fayl tahrirlari avtomatik).
+    # "bypass" faqat izolyatsiyalangan non-root konteynerda ishlatilsin.
+    if env("AGENT_PERMISSION_MODE", "allowlist") == "bypass":
+        cmd.append("--dangerously-skip-permissions")
+    else:
+        cmd += ["--permission-mode", "acceptEdits"]
     max_turns = env("AGENT_MAX_TURNS", "")
     if max_turns:
         cmd += ["--max-turns", max_turns]

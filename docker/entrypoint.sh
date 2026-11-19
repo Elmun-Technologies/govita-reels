@@ -11,6 +11,11 @@ mkdir -p runs bank data
 
 # Tashqi skill'lar (skills.lock.json) — yo'q yoki commit o'zgargan bo'lsa o'rnatiladi
 python3 -m agency.skills_install || echo "[entrypoint] ⚠ skill o'rnatishda xato — keyinroq: bin/install-skills"
+# watch skill: birinchi marta — lokal engine, captions (whisper yuklamaydi)
+if [ -f .claude/skills/watch/scripts/setup.py ] && [ ! -f "$HOME/.config/watch/.env" ]; then
+  python3 .claude/skills/watch/scripts/setup.py --engine "${WATCH_ENGINE:-auto}" --backend none \
+    --detail "${WATCH_DETAIL:-efficient}" >/dev/null 2>&1 || true
+fi
 
 # Claude Code birinchi ishga tushishda onboarding so'ramasligi uchun
 if [ ! -f "$HOME/.claude.json" ]; then

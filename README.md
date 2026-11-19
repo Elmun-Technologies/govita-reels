@@ -58,6 +58,7 @@ claude mcp list      # tekshirish
 | Premiere Pro MCP + skill | `/premiere-polish` — bugungi videoni Premiere'da tahrir uchun yig'ish | Faqat Mac (Premiere ochiq) |
 | After Effects MCP, hyperframes-to-after-effects | AE'da motion, HyperFrames → AE | Faqat Mac |
 | VoiceLab MCP | O'zbekcha TTS/STT (MCP), pipeline'da `TTS_PROVIDER=voicelab` | Mac MCP + Docker |
+| watch (claude-video) | YouTube videoni "ko'rish": `/watch <havola> ...`; researcher top videolar hook'ini tahlil qiladi | Docker/bulut (transkript) + Mac (kadrlar ham) |
 | Blender MCP | 3D sahnalar — qo'lda o'rnatiladi (`bin/setup-mac` oxirida yo'riqnoma) | Faqat Mac |
 
 ### 5. Ishga tushirish

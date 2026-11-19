@@ -56,7 +56,8 @@ RUN chown -R node:node /app
 # Claude Code --dangerously-skip-permissions root ostida ishlamaydi → non-root user
 USER node
 ENV HOME=/home/node
-RUN mkdir -p /home/node/.claude
+RUN mkdir -p /home/node/.claude /home/node/.config/yt-dlp \
+    && echo "--js-runtimes node" > /home/node/.config/yt-dlp/config
 
 ENTRYPOINT ["/app/docker/entrypoint.sh"]
 CMD ["cron"]

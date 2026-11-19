@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+# Bulutda (Claude Code scheduled task) bitta to'liq kunlik run:
+#   bog'liqliklar → skill'lar → state pull → pipeline → state push
+# Foydalanish: bin/cloud-run [bin/run-daily argumentlari]
+set -uo pipefail
+cd "$(dirname "$0")/.."
+export AGENCY_ROOT="$(pwd)" TZ="${TZ:-Asia/Tashkent}" AGENT_PERMISSION_MODE="${AGENT_PERMISSION_MODE:-allowlist}"
+
+echo "▶ bog'liqliklar"
+python3 -m pip install -q --break-system-packages -r requirements.txt 2>/dev/null \
+  || python3 -m pip install -q -r requirements.txt
+[ -d node_modules/hyperframes ] || npm ci --no-audit --no-fund --silent
+mkdir -p "$HOME/.config/yt-dlp" && grep -q js-runtimes "$HOME/.config/yt-dlp/config" 2>/dev/null \
+  || echo "--js-runtimes node" >> "$HOME/.config/yt-dlp/config"
+if [ -z "${CHROMIUM_PATH:-}" ]; then
+  for c in chromium chromium-browser google-chrome google-chrome-stable; do
+    if command -v "$c" >/dev/null; then export CHROMIUM_PATH="$(command -v $c)"; break; fi
+  done
+fi
+export HYPERFRAMES_BROWSER_PATH="${HYPERFRAMES_BROWSER_PATH:-${CHROMIUM_PATH:-}}"
+
+echo "▶ skill'lar"
+python3 -m agency.skills_install || echo "⚠ skill o'rnatish xato"
+python3 .claude/skills/watch/scripts/setup.py --engine "${WATCH_ENGINE:-auto}" --backend none \
+  --detail "${WATCH_DETAIL:-efficient}" >/dev/null 2>&1 || true
+
+echo "▶ state pull"
+python3 -m agency.state_sync pull || echo "⚠ state pull xato — toza holatdan davom"
+
+echo "▶ pipeline"
+bin/run-daily "$@"
+code=$?
+
+echo "▶ state push"
+python3 -m agency.state_sync push || python3 -c "from agency import telegram; telegram.send_alert('state push xato — holat saqlanmadi')"
+exit $code
