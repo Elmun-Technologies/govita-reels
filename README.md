@@ -59,6 +59,7 @@ claude mcp list      # tekshirish
 | After Effects MCP, hyperframes-to-after-effects | AE'da motion, HyperFrames → AE | Faqat Mac |
 | VoiceLab MCP | O'zbekcha TTS/STT (MCP), pipeline'da `TTS_PROVIDER=voicelab` | Mac MCP + Docker |
 | watch (claude-video) | YouTube videoni "ko'rish": `/watch <havola> ...`; researcher top videolar hook'ini tahlil qiladi | Docker/bulut (transkript) + Mac (kadrlar ham) |
+| ig-* (13 ta Instagram skill) | Copywriter: hook formulalari va reytingi, caption, "AI hidi"ni tozalash. Interaktiv: `/ig-plan`, `/ig-audit`, `/ig-profile`, `/ig-viral`, `/ig-reply`, `/ig-dm` … | Docker/bulut + Mac |
 | Blender MCP | 3D sahnalar — qo'lda o'rnatiladi (`bin/setup-mac` oxirida yo'riqnoma) | Faqat Mac |
 
 ### 5. Ishga tushirish

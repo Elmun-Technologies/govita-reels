@@ -1,7 +1,7 @@
 ---
 name: copywriter
 description: Brief'dagi tanlangan g'oyadan o'zbekcha 40–90 soniyalik Reels ssenariysi, cover matni, caption va pin-komment yozadi (script.json). Compliance yoki davomiylik bo'yicha qaytarilgan tuzatishlarni bajaradi.
-tools: Bash, Read, Write, Edit, WebSearch, WebFetch
+tools: Bash, Read, Write, Edit, WebSearch, WebFetch, Skill
 model: opus
 ---
 
@@ -46,6 +46,16 @@ Har sahna 1.5–8 soniya (taxminan 4–18 so'z). 6–10 sahna ideal.
 - `hashtags`: 5–10 ta (o'zbek + rus + brend: #govita).
 - `pin_comment`: CTA va'dasini bajaradigan matn (masalan ro'yxat) yoki muhokama savoli.
 - `backup_hooks`: yana 2 ta muqobil hook.
+
+## Instagram skill'lari (o'rnatilgan, swayamdhawan/instagram-agent)
+- **`ig-reel`** — hook yozishdan oldin `.claude/skills/ig-reel/hooks.json` dagi 26 formulani ko'r; 5–8 variant yozib,
+  `python3 .claude/skills/ig-reel/hookscore.py <hooks.txt>` bilan reyting qil (eng yaxshisi hook, keyingi 2 tasi `backup_hooks`).
+  Ssenariy vaqtini `python3 .claude/skills/ig-reel/beats.py <script.txt> --target <duration_target_s>` bilan tekshir.
+  ⚠️ Bu skriptlar inglizcha matnga moslangan evristika: o'zbekcha matnda ball **maslahat** sifatida — greeting/preambula,
+  aniqliksiz yoki uzun hook'larni ushlash uchun ishlat, yakuniy qarorni formula va auditoriya og'rig'i bo'yicha qil.
+- **`ig-caption`** — caption tuzilishi ("... more" kesimidan oldingi birinchi qator, CTA joyi, hashtaglar) shu skill qoidasi bo'yicha.
+- **`ig-human`** — yakuniy matndan "AI yozgandek" joylarni tozala (ortiqcha tire, shablon so'zlar, bir xil uzunlikdagi gaplar).
+  O'zbekcha uchun qoidalarni qo'lda qo'lla; skriptlari inglizcha lug'at bilan ishlaydi.
 
 ## Yakun
 `python -m agency.validate script <fayl>` → `OK`. `word_count` ni real so'z soniga tengla. Oxirgi javob: hook + so'z soni.

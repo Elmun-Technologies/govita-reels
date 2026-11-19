@@ -123,6 +123,7 @@ Telegram: `/status`, `/run`, `/regen`, tugmalar 👍 / 👎 / 🔁.
 | Tashqi skill'lar vendor qilinmaydi, lock + installer | Litsenziya (Clipwing/skills'da LICENSE yo'q), yangilash oson, repo yengil |
 | Premiere/AE MCP faqat Mac'da, interaktiv (`/premiere-polish`) | Ular GUI ilova + CEP/ScriptUI panel talab qiladi; soat 05:00 dagi avtomatik pipeline'da ishonchsiz. Avtomatik render — HyperFrames |
 | `watch` skill (bradautomates/claude-video) researcher'da | Top outlier videolarning hook/ritm/kadrini ko'rish; captions-first, whisper yuklanmaydi |
+| ig-* skill'lari: ig-reel/ig-caption/ig-human copywriter'da, qolganlari interaktiv | Faqat matn yozadi va tahlil qiladi — post joylamaydi, Instagram statistikasini o'zi olmaydi. Evristikalar inglizcha → o'zbekchada maslahat |
 | Agent ruxsatlari allowlist bilan, bypass emas | Xavfsizroq; root ostida ham ishlaydi (bulut) |
 | video-storyboard skill o'rnatilmadi | `image_gen` tool talab qiladi (Codex/ChatGPT), Claude Code'da yo'q |
 
@@ -130,7 +131,7 @@ Telegram: `/status`, `/run`, `/regen`, tugmalar 👍 / 👎 / 🔁.
 YouTube Data API v3 (kvota 10k/kun, ~2.5k sarf) · yt-dlp · Meta Ad Library (veb) · Pexels API · Pixabay API ·
 ElevenLabs `/v1/text-to-speech/{voice}/with-timestamps` · VoiceLab `/v1/tts` + `/v1/stt` · Telegram Bot API (sendVideo ≤50MB) ·
 Claude Code CLI (Max) · Skill'lar: hyperframes, hyperframes-cli, hyperframes-registry, media-use, find-skills, real-sfx,
-hyperframes-to-after-effects, earshot, premiere-pro-mcp, watch (YouTube ko'rish) · Mac MCP: Premiere Pro (CEP), After Effects, VoiceLab, earshot, Blender (qo'lda).
+hyperframes-to-after-effects, earshot, premiere-pro-mcp, watch (YouTube ko'rish), ig-* (13 ta Instagram skill: swayamdhawan/instagram-agent) · Mac MCP: Premiere Pro (CEP), After Effects, VoiceLab, earshot, Blender (qo'lda).
 
 ## 11. Glossary
 - **Hook** — videoning birinchi 0–3 soniyasidagi diqqatni ushlovchi jumla
@@ -160,7 +161,8 @@ hyperframes-to-after-effects, earshot, premiere-pro-mcp, watch (YouTube ko'rish)
 - [ ] ElevenLabs o'zbekcha ovozni tanlash va talaffuzni sinash
 - [ ] Bulut muhitiga kalitlarni qo'shish (+ `CLAUDE_CODE_OAUTH_TOKEN`) → scheduled task yaratish → test run
 - [ ] Haftalik `weekly_review` agenti (👍/👎 → hook-library yangilash)
-- [ ] Instagram'ga avtomatik joylash (Meta Graph API) — ixtiyoriy, qo'lda tasdiqdan keyin
+- [ ] **Instagram Graph API** (Business akkaunt + Meta app): Reels statistikasi (reach, saqlash, komment, obunachi) har kuni
+      `state.sqlite` ga → `weekly_review` (ig-audit + ig-plan) haqiqiy raqamlar bilan; ixtiyoriy: tasdiqdan keyin avtomatik joylash
 - [ ] `brand/sfx/` ga haqiqiy SFX pak (whoosh/hit/pop/riser) — sound bosqichi shundan keyin yoqiladi
 - [ ] Mustafo skill paki (mustafo-montaj-usuli, reels-zonali-montaj, viral-reels-scriptwriter …) — arxiv kelgach integratsiya
 

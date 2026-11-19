@@ -103,6 +103,136 @@
         "researcher",
         "interactive (/watch)"
       ]
+    },
+    {
+      "name": "ig-reel",
+      "repo": "swayamdhawan/instagram-agent",
+      "commit": "8f6a51d409c98ac39967a29b088b166ed689f9fc",
+      "path": "skills/ig-reel",
+      "license": "MIT",
+      "used_by": [
+        "copywriter"
+      ]
+    },
+    {
+      "name": "ig-caption",
+      "repo": "swayamdhawan/instagram-agent",
+      "commit": "8f6a51d409c98ac39967a29b088b166ed689f9fc",
+      "path": "skills/ig-caption",
+      "license": "MIT",
+      "used_by": [
+        "copywriter"
+      ]
+    },
+    {
+      "name": "ig-human",
+      "repo": "swayamdhawan/instagram-agent",
+      "commit": "8f6a51d409c98ac39967a29b088b166ed689f9fc",
+      "path": "skills/ig-human",
+      "license": "MIT",
+      "used_by": [
+        "copywriter"
+      ]
+    },
+    {
+      "name": "ig-viral",
+      "repo": "swayamdhawan/instagram-agent",
+      "commit": "8f6a51d409c98ac39967a29b088b166ed689f9fc",
+      "path": "skills/ig-viral",
+      "license": "MIT",
+      "used_by": [
+        "interactive (Chrome, oylik)"
+      ]
+    },
+    {
+      "name": "ig-plan",
+      "repo": "swayamdhawan/instagram-agent",
+      "commit": "8f6a51d409c98ac39967a29b088b166ed689f9fc",
+      "path": "skills/ig-plan",
+      "license": "MIT",
+      "used_by": [
+        "interactive (haftalik)"
+      ]
+    },
+    {
+      "name": "ig-audit",
+      "repo": "swayamdhawan/instagram-agent",
+      "commit": "8f6a51d409c98ac39967a29b088b166ed689f9fc",
+      "path": "skills/ig-audit",
+      "license": "MIT",
+      "used_by": [
+        "interactive (haftalik)"
+      ]
+    },
+    {
+      "name": "ig-profile",
+      "repo": "swayamdhawan/instagram-agent",
+      "commit": "8f6a51d409c98ac39967a29b088b166ed689f9fc",
+      "path": "skills/ig-profile",
+      "license": "MIT",
+      "used_by": [
+        "interactive"
+      ]
+    },
+    {
+      "name": "ig-carousel",
+      "repo": "swayamdhawan/instagram-agent",
+      "commit": "8f6a51d409c98ac39967a29b088b166ed689f9fc",
+      "path": "skills/ig-carousel",
+      "license": "MIT",
+      "used_by": [
+        "interactive"
+      ]
+    },
+    {
+      "name": "ig-story",
+      "repo": "swayamdhawan/instagram-agent",
+      "commit": "8f6a51d409c98ac39967a29b088b166ed689f9fc",
+      "path": "skills/ig-story",
+      "license": "MIT",
+      "used_by": [
+        "interactive"
+      ]
+    },
+    {
+      "name": "ig-repurpose",
+      "repo": "swayamdhawan/instagram-agent",
+      "commit": "8f6a51d409c98ac39967a29b088b166ed689f9fc",
+      "path": "skills/ig-repurpose",
+      "license": "MIT",
+      "used_by": [
+        "interactive"
+      ]
+    },
+    {
+      "name": "ig-comment",
+      "repo": "swayamdhawan/instagram-agent",
+      "commit": "8f6a51d409c98ac39967a29b088b166ed689f9fc",
+      "path": "skills/ig-comment",
+      "license": "MIT",
+      "used_by": [
+        "interactive"
+      ]
+    },
+    {
+      "name": "ig-reply",
+      "repo": "swayamdhawan/instagram-agent",
+      "commit": "8f6a51d409c98ac39967a29b088b166ed689f9fc",
+      "path": "skills/ig-reply",
+      "license": "MIT",
+      "used_by": [
+        "interactive"
+      ]
+    },
+    {
+      "name": "ig-dm",
+      "repo": "swayamdhawan/instagram-agent",
+      "commit": "8f6a51d409c98ac39967a29b088b166ed689f9fc",
+      "path": "skills/ig-dm",
+      "license": "MIT",
+      "used_by": [
+        "interactive"
+      ]
     }
   ],
   "not_installed": [
